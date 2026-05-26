@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Shipment — Trendy Luxury</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  min-height:100vh;
+  background:linear-gradient(160deg,#0a1628 0%,#0f2347 55%,#0a1628 100%);
+  padding:20px;
+}
+/* ─ HEADER ─ */
+.hdr{text-align:center;padding:40px 0 28px;}
+.hdr-ic{font-size:56px;display:block;margin-bottom:14px;}
+.hdr h1{font-size:30px;font-weight:900;color:#fff;letter-spacing:.5px;}
+.hdr p{color:rgba(255,255,255,0.38);font-size:11.5px;letter-spacing:3px;text-transform:uppercase;margin-top:5px;}
+/* ─ SEARCH ─ */
+.sbox{
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(201,168,76,0.2);
+  border-radius:20px;padding:26px 24px;
+  max-width:480px;margin:0 auto 24px;
+}
+.sbox label{display:block;color:rgba(255,255,255,0.55);font-size:12px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.sbox input{
+  width:100%;padding:13px 16px;
+  background:rgba(255,255,255,0.07);
+  border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:11px;color:#fff;font-size:15px;font-family:inherit;
+  outline:none;margin-bottom:12px;transition:all .2s;
+}
+.sbox input:focus{border-color:rgba(201,168,76,0.55);background:rgba(255,255,255,0.1);}
+.sbox input::placeholder{color:rgba(255,255,255,0.22);}
+.btn-search{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#c9a84c,#e8c96a);
+  color:#0a1628;border:none;border-radius:11px;
+  font-size:15px;font-weight:900;font-family:inherit;cursor:pointer;
+  transition:all .2s;
+}
+.btn-search:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.4);}
+.hint{text-align:center;color:rgba(255,255,255,0.25);font-size:12px;margin-top:10px;line-height:1.6;}
+/* ─ STATES ─ */
+.loading{display:none;text-align:center;padding:28px;color:rgba(255,255,255,0.5);font-size:14px;}
+.errbox{display:none;max-width:480px;margin:0 auto 20px;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.25);border-radius:14px;padding:18px 20px;text-align:center;color:#fca5a5;font-size:14px;font-weight:500;}
+#results{max-width:580px;margin:0 auto;}
+/* ─ CUSTOMER CHIP ─ */
+.cust-chip{
+  background:rgba(201,168,76,0.1);
+  border:1px solid rgba(201,168,76,0.22);
+  border-radius:14px;padding:16px 20px;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.cust-av{
+  width:48px;height:48px;border-radius:13px;flex-shrink:0;
+  background:linear-gradient(135deg,#c9a84c,#e8c96a);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:#0a1628;
+}
+.ci-name{font-size:17px;font-weight:800;color:#fff;}
+.ci-sub{font-size:12px;color:rgba(255,255,255,0.42);margin-top:2px;}
+/* ─ PRODUCT CARD ─ */
+.pcard{
+  background:rgba(255,255,255,0.055);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:17px;margin-bottom:14px;overflow:hidden;
+}
+.pcard-top{
+  padding:17px 20px 13px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+}
+.pname{font-size:15px;font-weight:800;color:#fff;}
+.ptag{font-family:monospace;font-size:11.5px;background:rgba(255,255,255,0.08);padding:3px 10px;border-radius:99px;color:rgba(255,255,255,0.6);white-space:nowrap;}
+.pcard-body{padding:16px 20px;}
+/* ─ STATUS PILL ─ */
+.spill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:99px;font-size:12px;font-weight:800;margin-top:6px;}
+.sp0{background:rgba(107,114,128,.2);color:#9ca3af;}
+.sp1{background:rgba(37,99,235,.2);color:#60a5fa;}
+.sp2{background:rgba(124,58,237,.2);color:#a78bfa;}
+.sp3{background:rgba(217,119,6,.2);color:#fbbf24;}
+.sp4{background:rgba(234,88,12,.2);color:#fb923c;}
+.sp5{background:rgba(22,163,74,.2);color:#4ade80;}
+/* ─ TIMELINE ─ */
+.tl{position:relative;padding-left:26px;margin:16px 0;}
+.tl::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:rgba(255,255,255,0.1);}
+.tl-item{position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{position:absolute;left:-22px;top:2px;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.12);}
+.tl-dot.done{background:#16a34a;border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.2);}
+.tl-dot.active{background:#c9a84c;border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.22);}
+.tl-lbl{font-size:13.5px;color:rgba(255,255,255,0.38);font-weight:500;line-height:1.4;}
+.tl-lbl.done{color:#4ade80;}
+.tl-lbl.active{color:#e8c96a;font-weight:800;}
+.tl-sub{font-size:11.5px;color:rgba(255,255,255,0.22);margin-top:2px;}
+/* ─ META ─ */
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);}
+.meta-item label{font-size:10px;color:rgba(255,255,255,0.32);text-transform:uppercase;letter-spacing:1.2px;display:block;margin-bottom:3px;}
+.meta-item p{font-size:13.5px;font-weight:700;color:#fff;}
+/* ─ FOOTER ─ */
+.foot{text-align:center;padding:36px 0 18px;color:rgba(255,255,255,0.2);font-size:12px;line-height:2;}
+@media(max-width:480px){
+  .hdr h1{font-size:24px;}
+  .sbox{padding:20px 16px;}
+  .meta{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<div class="hdr">
+  <span class="hdr-ic">💎</span>
+  <h1>Trendy Luxury</h1>
+  <p>Shipment Tracking</p>
+</div>
+
+<div class="sbox">
+  <label>Enter Tracking Code or Customer ID</label>
+  <input type="text" id="qinput" placeholder="e.g.  TL2024001   or   0011"
+    onkeypress="if(event.key==='Enter')doSearch()">
+  <button class="btn-search" onclick="doSearch()">🔍 Track My Shipment</button>
+  <p class="hint">
+    Tracking code → shows that single item<br>
+    Customer ID → shows all your shipments
+  </p>
+</div>
+
+<div class="loading" id="loading">⏳ Searching your shipment…</div>
+<div class="errbox" id="errbox"></div>
+<div id="results"></div>
+
+<div class="foot">
+  📞 +8801614867033 &nbsp;·&nbsp; 💬 WeChat: ashik_akanda<br>
+  🏢 Kuril, Vatara, Dhaka, Bangladesh &nbsp;·&nbsp; Nantong, Jiangsu, China<br>
+  © 2024 Trendy Luxury — China to Bangladesh Import Platform
+</div>
+
+<script>
+// ╔══════════════════════════════════════════╗
+// ║  PASTE YOUR FIREBASE CONFIG HERE         ║
+// ╚══════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyBsrLYkffkEtXzy5r8SEaAkqpKd3rf6_Zw",
+  authDomain: "trendy-luxury.firebaseapp.com",
+  projectId: "trendy-luxury",
+  storageBucket: "trendy-luxury.firebasestorage.app",
+  messagingSenderId: "117124873306",
+  appId: "1:117124873306:web:790e5016b05d01fde2ec63",
+  measurementId: "G-RTQYSZXWRB"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+// Auto-search if URL has ?track= or ?id=
+window.onload=()=>{
+  const p=new URLSearchParams(location.search);
+  const q=p.get('track')||p.get('id');
+  if(q){ document.getElementById('qinput').value=q; doSearch(); }
+};
+
+let unsubscribe=null;
+
+async function doSearch(){
+  const q=document.getElementById('qinput').value.trim();
+  if(!q){ showErr('Please enter a tracking code or customer ID.'); return; }
+  if(unsubscribe){ unsubscribe(); unsubscribe=null; }
+  document.getElementById('loading').style.display='block';
+  document.getElementById('errbox').style.display='none';
+  document.getElementById('results').innerHTML='';
+
+  // Try tracking code first
+  const byTrack=await db.collection('products').where('trackingCode','==',q).get();
+  if(!byTrack.empty){
+    const docId=byTrack.docs[0].id;
+    // Realtime listener on this single product
+    unsubscribe=db.collection('products').doc(docId).onSnapshot(async snap=>{
+      if(!snap.exists){ showErr('Shipment not found.'); return; }
+      const prod={id:snap.id,...snap.data()};
+      let cust=null;
+      if(prod.customerId){
+        const cs=await db.collection('customers').where('customerId','==',prod.customerId).limit(1).get();
+        if(!cs.empty) cust=cs.docs[0].data();
+      }
+      document.getElementById('loading').style.display='none';
+      render([prod],cust);
+    });
+  } else {
+    // Try customer ID — realtime listener on all their products
+    unsubscribe=db.collection('products').where('customerId','==',q).onSnapshot(async snap=>{
+      document.getElementById('loading').style.display='none';
+      if(snap.empty){ showErr('❌ Nothing found. Please check your tracking code or customer ID.'); return; }
+      const prods=snap.docs.map(d=>({id:d.id,...d.data()}));
+      let cust=null;
+      const cs=await db.collection('customers').where('customerId','==',q).limit(1).get();
+      if(!cs.empty) cust=cs.docs[0].data();
+      render(prods,cust);
+    });
+  }
+}
+
+function showErr(msg){
+  document.getElementById('loading').style.display='none';
+  const el=document.getElementById('errbox');
+  el.textContent=msg; el.style.display='block';
+  document.getElementById('results').innerHTML='';
+}
+
+// ─ Statuses ─
+const STATS=[
+  {k:'Buy',            l:'Order Placed',           d:'Your order has been confirmed',    ic:'🛒'},
+  {k:'Delivering China',l:'Delivering in China',   d:'Product is being sent to warehouse',ic:'🚚'},
+  {k:'In Guangzhou',   l:'In Guangzhou Warehouse', d:'Arrived at Guangzhou, China',      ic:'🏭'},
+  {k:'Shipping to Bangladesh',l:'Shipping to Bangladesh',d:'On the way to Bangladesh',   ic:'✈️'},
+  {k:'Bangladesh Warehouse',l:'Bangladesh Warehouse',d:'Arrived in Dhaka warehouse',     ic:'🏪'},
+  {k:'Delivered',      l:'Delivered',              d:'Successfully delivered to you',     ic:'✅'},
+];
+const SCLS=['sp0','sp1','sp2','sp3','sp4','sp5'];
+
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d=ts.toDate?ts.toDate():new Date(ts);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '
+    +d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+function render(prods, cust){
+  const wrap=document.getElementById('results');
+  wrap.innerHTML='';
+
+  // Customer chip (if multiple products or we have customer info)
+  if(cust){
+    const chip=document.createElement('div');
+    chip.className='cust-chip';
+    chip.innerHTML=`
+      <div class="cust-av">${cust.name.charAt(0).toUpperCase()}</div>
+      <div>
+        <div class="ci-name">${cust.name}</div>
+        <div class="ci-sub">Customer ID: #${cust.customerId} &nbsp;·&nbsp; ${prods.length} shipment(s) found</div>
+      </div>`;
+    wrap.appendChild(chip);
+  }
+
+  prods.forEach(p=>{
+    const si=STATS.findIndex(s=>s.k===p.status);
+    const tl=STATS.map((s,i)=>{
+      let dc='',lc='';
+      if(i<si){dc='done';lc='done';}
+      if(i===si){dc='active';lc='active';}
+      return `<div class="tl-item">
+        <div class="tl-dot ${dc}"></div>
+        <div class="tl-lbl ${lc}">${s.ic} ${s.l}</div>
+        <div class="tl-sub">${s.d}</div>
+      </div>`;
+    }).join('');
+
+    const card=document.createElement('div');
+    card.className='pcard';
+    card.innerHTML=`
+      <div class="pcard-top">
+        <div>
+          <div class="pname">${p.productName}</div>
+          <span class="spill ${SCLS[si]||'sp0'}">${p.status}</span>
+        </div>
+        <div class="ptag">${p.trackingCode}</div>
+      </div>
+      <div class="pcard-body">
+        <div class="tl">${tl}</div>
+        <div class="meta">
+          <div class="meta-item"><label>Tracking Code</label><p style="font-family:monospace;font-size:13px">${p.trackingCode}</p></div>
+          <div class="meta-item"><label>Box Number</label><p>${p.boxNumber||'—'}</p></div>
+          <div class="meta-item" style="grid-column:1/-1"><label>Last Updated</label><p style="font-size:13px;font-weight:600">${fmtDate(p.updatedAt)}</p></div>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>

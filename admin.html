@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Trendy Luxury</title>
+<style>
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0a1628;
+  --navy2:#0f2347;
+  --navy3:#1a3a6b;
+  --gold:#c9a84c;
+  --gold2:#e8c96a;
+  --bg:#eef2fb;
+  --surface:#f7f9ff;
+  --card:#ffffff;
+  --border:#dde4f2;
+  --text:#0f2347;
+  --muted:#6b7a9e;
+  --green:#16a34a;
+  --green-bg:rgba(22,163,74,0.1);
+  --blue:#2563eb;
+  --blue-bg:rgba(37,99,235,0.1);
+  --amber:#d97706;
+  --amber-bg:rgba(217,119,6,0.1);
+  --purple:#7c3aed;
+  --purple-bg:rgba(124,58,237,0.1);
+  --orange:#ea580c;
+  --orange-bg:rgba(234,88,12,0.1);
+  --red:#dc2626;
+  --red-bg:rgba(220,38,38,0.1);
+  --sidebar:256px;
+  --r:12px;
+  --sh:0 1px 12px rgba(15,35,71,0.07);
+  --sh2:0 4px 28px rgba(15,35,71,0.13);
+}
+[data-dark]{
+  --bg:#08111f;
+  --surface:#0d1a30;
+  --card:#0f2347;
+  --border:#1a3055;
+  --text:#dde8f8;
+  --muted:#7a8db5;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s;}
+button,input,select,textarea{font-family:inherit;}
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.layout{display:flex;min-height:100vh;}
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:var(--sidebar);position:fixed;
+  top:0;left:0;height:100vh;
+  background:linear-gradient(175deg,#0a1628 0%,#07111f 100%);
+  border-right:1px solid rgba(201,168,76,0.1);
+  display:flex;flex-direction:column;z-index:300;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;overflow-x:hidden;
+}
+.sb-top{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-brand{display:flex;align-items:center;gap:11px;}
+.sb-icon{
+  width:40px;height:40px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 4px 14px rgba(201,168,76,0.32);
+}
+.sb-brand h2{color:#fff;font-size:15px;font-weight:800;line-height:1.2;}
+.sb-brand span{color:var(--gold);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;}
+.sb-nav{flex:1;padding:10px 10px;}
+.sb-sec{font-size:10px;color:rgba(255,255,255,0.22);text-transform:uppercase;letter-spacing:1.8px;padding:12px 10px 5px;font-weight:700;}
+.nb{
+  display:flex;align-items:center;gap:10px;
+  width:100%;padding:10px 12px;
+  background:transparent;border:1px solid transparent;
+  border-radius:10px;color:rgba(255,255,255,0.5);
+  font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;
+  transition:all .18s;margin-bottom:1px;
+}
+.nb .ni{font-size:17px;width:20px;text-align:center;flex-shrink:0;}
+.nb:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.nb.on{background:rgba(201,168,76,0.14);color:var(--gold);border-color:rgba(201,168,76,0.2);}
+.sb-foot{padding:14px 10px;border-top:1px solid rgba(255,255,255,0.06);}
+.adm{display:flex;align-items:center;gap:9px;padding:9px 11px;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:9px;}
+.adm-av{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--navy);flex-shrink:0;}
+.adm-info p{font-size:12.5px;color:#fff;font-weight:600;}
+.adm-info span{font-size:10.5px;color:rgba(255,255,255,0.38);}
+.btn-out{width:100%;padding:9px;background:rgba(220,38,38,0.1);color:#f87171;border:1px solid rgba(220,38,38,0.18);border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:700;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-out:hover{background:rgba(220,38,38,0.2);}
+/* ─── MAIN ─── */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 22px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh);}
+.topbar-l{display:flex;align-items:center;gap:12px;}
+.hbg{display:none;flex-direction:column;gap:4.5px;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;}
+.hbg span{width:20px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .2s;}
+.pg-title{font-size:17px;font-weight:800;color:var(--text);}
+.tbr{display:flex;align-items:center;gap:8px;}
+.icon-btn{width:36px;height:36px;border-radius:9px;background:var(--surface);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .18s;color:var(--text);}
+.icon-btn:hover{background:var(--border);}
+.content{padding:22px;flex:1;}
+.page{display:none;}
+.page.on{display:block;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.48);z-index:299;}
+/* ═══════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════ */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:13px;margin-bottom:20px;}
+.scard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:17px 16px;
+  box-shadow:var(--sh);transition:transform .18s,box-shadow .18s;
+  position:relative;overflow:hidden;
+}
+.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc,var(--gold));}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.sc-icon{width:40px;height:40px;border-radius:10px;background:color-mix(in srgb,var(--sc,var(--gold)) 13%,transparent);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.sc-val{font-size:30px;font-weight:900;color:var(--text);line-height:1;}
+.sc-lbl{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600;}
+/* ═══════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;}
+.card-h{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.card-t{font-size:14.5px;font-weight:800;color:var(--text);}
+.card-b{padding:20px;}
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;transition:all .18s;white-space:nowrap;}
+.btn:active{transform:scale(.97);}
+.btn-navy{background:var(--navy2);color:#fff;}
+.btn-navy:hover{background:var(--navy3);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);}
+.btn-gold:hover{box-shadow:0 4px 16px rgba(201,168,76,0.38);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(220,38,38,0.2);}
+.btn-red:hover{background:rgba(220,38,38,0.18);}
+.btn-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(22,163,74,0.2);}
+.btn-green:hover{background:rgba(22,163,74,0.18);}
+.btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--border);}
+.btn-sm{padding:6px 11px;font-size:12.5px;}
+.btn-full{width:100%;justify-content:center;}
+/* ═══════════════════════════════════════════
+   FORMS
+═══════════════════════════════════════════ */
+.fg{margin-bottom:0;}
+.fl{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.fc{width:100%;padding:11px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-size:14px;outline:none;transition:all .18s;}
+.fc:focus{border-color:var(--navy2);box-shadow:0 0 0 3px rgba(15,35,71,0.09);}
+.fc::placeholder{color:#b0bdd4;}
+select.fc{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%236b7a9e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;}
+.form-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+/* ═══════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════ */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tbl thead th{background:var(--surface);color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:11px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border);}
+.tbl tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+.tbl tbody tr:hover{background:var(--surface);}
+.tbl tbody td{padding:13px 14px;vertical-align:middle;}
+.tbl tbody tr:last-child{border-bottom:none;}
+/* ═══════════════════════════════════════════
+   STATUS BADGES
+═══════════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:99px;font-size:11.5px;font-weight:800;white-space:nowrap;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.75;}
+.s0{background:rgba(107,114,128,.12);color:#4b5563;}
+.s1{background:var(--blue-bg);color:var(--blue);}
+.s2{background:var(--purple-bg);color:var(--purple);}
+.s3{background:var(--amber-bg);color:var(--amber);}
+.s4{background:var(--orange-bg);color:var(--orange);}
+.s5{background:var(--green-bg);color:var(--green);}
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.mbg{display:none;position:fixed;inset:0;background:rgba(8,17,31,.6);backdrop-filter:blur(5px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.mbg.on{display:flex;}
+.modal{background:var(--card);border-radius:18px;width:100%;max-width:530px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,0.3);animation:mIn .26s cubic-bezier(.4,0,.2,1);}
+@keyframes mIn{from{opacity:0;transform:translateY(20px) scale(.97);}to{opacity:1;transform:none;}}
+.mh{padding:19px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mt{font-size:16px;font-weight:800;color:var(--text);}
+.mc{width:30px;height:30px;border-radius:7px;background:var(--surface);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all .15s;}
+.mc:hover{background:var(--red);color:#fff;}
+.mb{padding:22px;}
+.mf{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+#toasts{position:fixed;bottom:20px;right:20px;z-index:900;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 16px;display:flex;align-items:center;gap:10px;min-width:260px;max-width:340px;box-shadow:var(--sh2);animation:tIn .28s ease;font-size:13.5px;font-weight:600;}
+@keyframes tIn{from{opacity:0;transform:translateX(22px);}to{opacity:1;transform:none;}}
+.toast.out{animation:tOut .24s ease forwards;}
+@keyframes tOut{to{opacity:0;transform:translateX(22px);}}
+.tok{border-left:3px solid var(--green);}
+.terr{border-left:3px solid var(--red);}
+.tinfo{border-left:3px solid var(--blue);}
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════ */
+.empty{text-align:center;padding:55px 20px;color:var(--muted);}
+.empty .ei{font-size:46px;margin-bottom:12px;opacity:.45;}
+.empty h3{font-size:15px;font-weight:800;color:var(--text);margin-bottom:5px;}
+.empty p{font-size:13px;}
+/* ═══════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════ */
+.sw{position:relative;flex:1;max-width:280px;}
+.sw input{width:100%;padding:9px 14px 9px 35px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-size:13.5px;outline:none;transition:border-color .18s;}
+.sw input:focus{border-color:var(--navy2);}
+.sw::before{content:'🔍';font-size:12px;position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;}
+/* ═══════════════════════════════════════════
+   QUICK ACTIONS
+═══════════════════════════════════════════ */
+.qa{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:12px;}
+.qab{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px 12px;text-align:center;cursor:pointer;transition:all .18s;box-shadow:var(--sh);}
+.qab:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--gold);}
+.qab .qi{font-size:26px;margin-bottom:6px;}
+.qab span{display:block;font-size:12.5px;font-weight:700;color:var(--text);}
+/* ═══════════════════════════════════════════
+   BOX PREVIEW
+═══════════════════════════════════════════ */
+.box-preview{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;display:none;}
+.box-preview-head{padding:10px 14px;background:var(--surface);font-size:12px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border);}
+/* ═══════════════════════════════════════════
+   TIMELINE (in product card)
+═══════════════════════════════════════════ */
+.tl{position:relative;padding-left:24px;}
+.tl::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border);}
+.tl-item{position:relative;padding-bottom:16px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{position:absolute;left:-20px;top:3px;width:15px;height:15px;border-radius:50%;background:var(--border);border:2px solid var(--border);transition:all .2s;}
+.tl-dot.done{background:var(--green);border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.18);}
+.tl-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.22);}
+.tl-lbl{font-size:13px;color:var(--muted);font-weight:500;}
+.tl-lbl.done{color:var(--green);}
+.tl-lbl.active{color:var(--gold);font-weight:800;}
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);box-shadow:0 0 50px rgba(0,0,0,0.4);}
+  .overlay.on{display:block;}
+  .hbg{display:flex;}
+  .main{margin-left:0;}
+  .content{padding:14px;}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .form-row{grid-template-columns:1fr;}
+  .card-h{flex-direction:column;align-items:flex-start;}
+  .sw{max-width:100%;}
+  #toasts{left:12px;right:12px;bottom:12px;}
+  .toast{min-width:unset;max-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- PDF + Excel + Canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<div class="layout">
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-icon">💎</div>
+      <div><h2>Trendy Luxury</h2><span>Admin Panel</span></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <button class="nb on" data-p="dash" onclick="goPage('dash',this)"><span class="ni">📊</span>Dashboard</button>
+    <div class="sb-sec">Manage</div>
+    <button class="nb" data-p="cust" onclick="goPage('cust',this)"><span class="ni">👥</span>Customers</button>
+    <button class="nb" data-p="prod" onclick="goPage('prod',this)"><span class="ni">📦</span>Products</button>
+    <button class="nb" data-p="box" onclick="goPage('box',this)"><span class="ni">📫</span>Box Delivery</button>
+    <div class="sb-sec">Links</div>
+    <button class="nb" onclick="window.open('track.html','_blank')"><span class="ni">🔍</span>Tracking Page ↗</button>
+  </nav>
+  <div class="sb-foot">
+    <div class="adm"><div class="adm-av" id="av">A</div><div class="adm-info"><p id="aname">Admin</p><span>Administrator</span></div></div>
+    <button class="btn-out" onclick="auth.signOut()">🚪 Logout</button>
+  </div>
+</aside>
+<div class="overlay" id="ov" onclick="closeSB()"></div>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="hbg" onclick="toggleSB()"><span></span><span></span><span></span></button>
+      <span class="pg-title" id="pgtitle">Dashboard</span>
+    </div>
+    <div class="tbr">
+      <button class="icon-btn" id="thbtn" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ░░ DASHBOARD ░░ -->
+    <div class="page on" id="page-dash">
+      <div class="stats">
+        <div class="scard" style="--sc:var(--blue)"><div class="sc-icon">👥</div><div class="sc-val" id="s-cust">—</div><div class="sc-lbl">Customers</div></div>
+        <div class="scard" style="--sc:var(--gold)"><div class="sc-icon">📦</div><div class="sc-val" id="s-prod">—</div><div class="sc-lbl">Total Products</div></div>
+        <div class="scard" style="--sc:var(--blue)"><div class="sc-icon">🇨🇳</div><div class="sc-val" id="s-china">—</div><div class="sc-lbl">In China</div></div>
+        <div class="scard" style="--sc:var(--amber)"><div class="sc-icon">✈️</div><div class="sc-val" id="s-ship">—</div><div class="sc-lbl">Shipping</div></div>
+        <div class="scard" style="--sc:var(--orange)"><div class="sc-icon">🏭</div><div class="sc-val" id="s-wh">—</div><div class="sc-lbl">BD Warehouse</div></div>
+        <div class="scard" style="--sc:var(--green)"><div class="sc-icon">✅</div><div class="sc-val" id="s-del">—</div><div class="sc-lbl">Delivered</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="card-t">⚡ Quick Actions</span></div>
+        <div class="card-b">
+          <div class="qa">
+            <div class="qab" onclick="openAddCust()"><div class="qi">👤</div><span>Add Customer</span></div>
+            <div class="qab" onclick="openAddProd()"><div class="qi">📦</div><span>Add Product</span></div>
+            <div class="qab" onclick="goPage('box',document.querySelector('[data-p=box]'))"><div class="qi">📫</div><span>Box Delivery</span></div>
+            <div class="qab" onclick="window.open('track.html','_blank')"><div class="qi">🔍</div><span>Track Page</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><span class="card-t">📦 Recent Shipments</span></div>
+        <div class="tw">
+          <table class="tbl">
+            <thead><tr><th>Cust ID</th><th>Product</th><th>Tracking</th><th>Box</th><th>Status</th></tr></thead>
+            <tbody id="recent-body"><tr><td colspan="5"><div class="empty"><p>Loading…</p></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ░░ CUSTOMERS ░░ -->
+    <div class="page" id="page-cust">
+      <div class="card">
+        <div class="card-h">
+          <span class="card-t">👥 Customers</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <div class="sw"><input id="cust-srch" placeholder="Search name or ID…" oninput="filterCust(this.value)"></div>
+            <button class="btn btn-gold" onclick="openAddCust()">➕ Add Customer</button>
+          </div>
+        </div>
+        <div class="tw">
+          <table class="tbl">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Shipments</th><th>Actions</th></tr></thead>
+            <tbody id="cust-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ░░ PRODUCTS ░░ -->
+    <div class="page" id="page-prod">
+      <div class="card">
+        <div class="card-h">
+          <span class="card-t">📦 Products / Shipments</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <div class="sw"><input id="prod-srch" placeholder="Search tracking, ID, box…" oninput="filterProd(this.value)"></div>
+            <button class="btn btn-gold" onclick="openAddProd()">➕ Add Product</button>
+          </div>
+        </div>
+        <div class="tw">
+          <table class="tbl">
+            <thead><tr><th>Cust ID</th><th>Product</th><th>Tracking</th><th>Box</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead>
+            <tbody id="prod-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ░░ BOX DELIVERY ░░ -->
+    <div class="page" id="page-box">
+      <div class="card" style="max-width:580px;">
+        <div class="card-h"><span class="card-t">📫 Bulk Box Delivery</span></div>
+        <div class="card-b">
+          <p style="color:var(--muted);font-size:13.5px;margin-bottom:18px;line-height:1.6;">
+            Type a box number below. You'll see all products inside that box. Then you can deliver the whole box in one click — all customers update instantly.
+          </p>
+          <div class="fg" style="margin-bottom:14px;">
+            <label class="fl">Box Number</label>
+            <input class="fc" id="box-num" placeholder="e.g. BOX-01  or  2" oninput="previewBox(this.value.trim())">
+          </div>
+          <div class="box-preview" id="box-preview">
+            <div class="box-preview-head" id="box-preview-head">Products in this box</div>
+            <div class="tw">
+              <table class="tbl">
+                <thead><tr><th>Cust ID</th><th>Product</th><th>Tracking</th><th>Current Status</th></tr></thead>
+                <tbody id="box-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+            <button class="btn btn-green" onclick="markDelivered()">✅ Mark All Delivered</button>
+            <div style="display:flex;gap:8px;flex:1;min-width:200px;align-items:flex-end;">
+              <div style="flex:1;">
+                <label class="fl">Or set all to status</label>
+                <select class="fc" id="box-status-sel">
+                  <option value="">— select —</option>
+                  <option>Buy</option>
+                  <option>Delivering China</option>
+                  <option>In Guangzhou</option>
+                  <option>Shipping to Bangladesh</option>
+                  <option>Bangladesh Warehouse</option>
+                  <option>Delivered</option>
+                </select>
+              </div>
+              <button class="btn btn-navy" onclick="setBoxStatus()">Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Add/Edit Customer -->
+<div class="mbg" id="m-cust">
+  <div class="modal">
+    <div class="mh"><span class="mt" id="m-cust-title">Add Customer</span><button class="mc" onclick="closeM('m-cust')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="cust-edit-id">
+      <div class="form-row">
+        <div class="fg"><label class="fl">Full Name *</label><input class="fc" id="cust-name" placeholder="e.g. Rahim Uddin"></div>
+        <div class="fg"><label class="fl">Email (optional)</label><input class="fc" id="cust-email" type="email" placeholder="email@example.com"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeM('m-cust')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveCust()">💾 Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Product -->
+<div class="mbg" id="m-prod">
+  <div class="modal">
+    <div class="mh"><span class="mt" id="m-prod-title">Add Product</span><button class="mc" onclick="closeM('m-prod')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="prod-edit-id">
+      <div class="form-row">
+        <div class="fg"><label class="fl">Customer ID *</label><input class="fc" id="p-cid" placeholder="e.g. 0011"></div>
+        <div class="fg"><label class="fl">Product Name *</label><input class="fc" id="p-name" placeholder="e.g. Samsung TV"></div>
+        <div class="fg"><label class="fl">Tracking Code *</label><input class="fc" id="p-track" placeholder="e.g. TL2024001"></div>
+        <div class="fg"><label class="fl">Box Number</label><input class="fc" id="p-box" placeholder="e.g. BOX-01"></div>
+        <div class="fg" style="grid-column:1/-1;"><label class="fl">Shipment Status</label>
+          <select class="fc" id="p-status">
+            <option>Buy</option>
+            <option>Delivering China</option>
+            <option>In Guangzhou</option>
+            <option>Shipping to Bangladesh</option>
+            <option>Bangladesh Warehouse</option>
+            <option>Delivered</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeM('m-prod')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProd()">💾 Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Status Update -->
+<div class="mbg" id="m-status">
+  <div class="modal" style="max-width:380px;">
+    <div class="mh"><span class="mt">Update Status</span><button class="mc" onclick="closeM('m-status')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="st-pid">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Tracking: <strong id="st-track"></strong></p>
+      <div class="fg"><label class="fl">New Status</label>
+        <select class="fc" id="st-sel">
+          <option>Buy</option><option>Delivering China</option><option>In Guangzhou</option>
+          <option>Shipping to Bangladesh</option><option>Bangladesh Warehouse</option><option>Delivered</option>
+        </select>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeM('m-status')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveStatus()">✅ Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Detail: view shipments, PDF, WhatsApp, Excel -->
+<div class="mbg" id="m-detail">
+  <div class="modal" style="max-width:640px;">
+    <div class="mh"><span class="mt" id="m-detail-title">Shipments</span><button class="mc" onclick="closeM('m-detail')">✕</button></div>
+    <div class="mb">
+      <div id="detail-info" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;font-size:13.5px;"></div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>Product</th><th>Tracking</th><th>Box</th><th>Status</th></tr></thead>
+          <tbody id="detail-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mf" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-ghost" onclick="closeM('m-detail')">Close</button>
+      <button class="btn btn-green" onclick="doExcel()">📊 Excel</button>
+      <button class="btn btn-navy" onclick="doWA()">💬 WhatsApp</button>
+      <button class="btn btn-gold" onclick="doPDF()">📄 PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+// ╔══════════════════════════════════════════╗
+// ║  PASTE YOUR FIREBASE CONFIG HERE         ║
+// ╚══════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyBsrLYkffkEtXzy5r8SEaAkqpKd3rf6_Zw",
+  authDomain: "trendy-luxury.firebaseapp.com",
+  projectId: "trendy-luxury",
+  storageBucket: "trendy-luxury.firebasestorage.app",
+  messagingSenderId: "117124873306",
+  appId: "1:117124873306:web:790e5016b05d01fde2ec63",
+  measurementId: "G-RTQYSZXWRB"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+const TS   = () => firebase.firestore.FieldValue.serverTimestamp();
+
+// ─── AUTH GUARD ───
+auth.onAuthStateChanged(u => {
+  if(!u){ location.href='login.html'; return; }
+  document.getElementById('aname').textContent = u.email.split('@')[0];
+  document.getElementById('av').textContent    = u.email[0].toUpperCase();
+  startListeners();
+});
+
+// ─── DATA STORES ───
+let CUSTS=[], PRODS=[];
+
+// ─── DARK MODE ───
+let dark = localStorage.getItem('tl-dark')==='1';
+applyDark();
+function toggleDark(){ dark=!dark; localStorage.setItem('tl-dark',dark?'1':'0'); applyDark(); }
+function applyDark(){
+  dark ? document.body.setAttribute('data-dark','') : document.body.removeAttribute('data-dark');
+  document.getElementById('thbtn').textContent = dark ? '☀️' : '🌙';
+}
+
+// ─── SIDEBAR ───
+function toggleSB(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('ov').classList.toggle('on'); }
+function closeSB(){  document.getElementById('sidebar').classList.remove('open'); document.getElementById('ov').classList.remove('on'); }
+
+// ─── PAGES ───
+const PAGE_TITLES = {dash:'Dashboard',cust:'Customers',prod:'Products',box:'Box Delivery'};
+function goPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+  document.getElementById('pgtitle').textContent = PAGE_TITLES[id]||id;
+  closeSB();
+}
+
+// ─── TOAST ───
+function toast(msg, type='tok'){
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  const icons={tok:'✅',terr:'❌',tinfo:'ℹ️'};
+  el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),280); },3500);
+}
+
+// ─── MODAL ───
+function openM(id){ document.getElementById(id).classList.add('on'); }
+function closeM(id){ document.getElementById(id).classList.remove('on'); }
+
+// ─── STATUS ───
+const STATUSES = ['Buy','Delivering China','In Guangzhou','Shipping to Bangladesh','Bangladesh Warehouse','Delivered'];
+const BADGE_CLS = ['s0','s1','s2','s3','s4','s5'];
+function badge(s){
+  const i=STATUSES.indexOf(s);
+  return `<span class="badge ${BADGE_CLS[i]||'s0'}">${s||'—'}</span>`;
+}
+
+// ─── DATE ───
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d=ts.toDate?ts.toDate():new Date(ts);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+    +' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ══════════════════════════════════════════
+// REALTIME LISTENERS
+// ══════════════════════════════════════════
+function startListeners(){
+  db.collection('customers').orderBy('customerId').onSnapshot(snap=>{
+    CUSTS = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderCusts(CUSTS);
+    document.getElementById('s-cust').textContent = CUSTS.length;
+  });
+  db.collection('products').orderBy('updatedAt','desc').onSnapshot(snap=>{
+    PRODS = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderProds(PRODS);
+    renderRecent(PRODS.slice(0,10));
+    updateStats(PRODS);
+    // Refresh box preview if open
+    const bv=document.getElementById('box-num').value.trim();
+    if(bv) previewBox(bv);
+  });
+}
+
+function updateStats(list){
+  let china=0,ship=0,wh=0,del=0;
+  list.forEach(p=>{
+    if(['Buy','Delivering China','In Guangzhou'].includes(p.status)) china++;
+    else if(p.status==='Shipping to Bangladesh') ship++;
+    else if(p.status==='Bangladesh Warehouse') wh++;
+    else if(p.status==='Delivered') del++;
+  });
+  document.getElementById('s-prod').textContent=list.length;
+  document.getElementById('s-china').textContent=china;
+  document.getElementById('s-ship').textContent=ship;
+  document.getElementById('s-wh').textContent=wh;
+  document.getElementById('s-del').textContent=del;
+}
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function renderCusts(list){
+  const tb=document.getElementById('cust-body');
+  if(!list.length){
+    tb.innerHTML=`<tr><td colspan="5"><div class="empty"><div class="ei">👥</div><h3>No customers yet</h3><p>Click "Add Customer" to get started</p></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML=list.map(c=>{
+    const cnt=PRODS.filter(p=>p.customerId===c.customerId).length;
+    return `<tr>
+      <td><strong style="color:var(--gold)">#${c.customerId}</strong></td>
+      <td><strong>${c.name}</strong></td>
+      <td style="color:var(--muted)">${c.email||'—'}</td>
+      <td><span style="font-weight:800;font-size:15px">${cnt}</span></td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-ghost" onclick="viewDetail('${c.customerId}')">📋 View</button>
+        <button class="btn btn-sm btn-ghost" onclick="editCust('${c.id}')">✏️</button>
+        <button class="btn btn-sm btn-red" onclick="delCust('${c.id}')">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderProds(list){
+  const tb=document.getElementById('prod-body');
+  if(!list.length){
+    tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="ei">📦</div><h3>No products yet</h3><p>Click "Add Product" to start</p></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML=list.map(p=>`<tr>
+    <td><strong style="color:var(--gold)">#${p.customerId}</strong></td>
+    <td><strong>${p.productName}</strong></td>
+    <td><code style="font-size:12px;background:var(--surface);padding:2px 7px;border-radius:5px;border:1px solid var(--border)">${p.trackingCode}</code></td>
+    <td>${p.boxNumber||'—'}</td>
+    <td>${badge(p.status)}</td>
+    <td style="color:var(--muted);font-size:12px;">${fmtDate(p.updatedAt)}</td>
+    <td><div style="display:flex;gap:5px;">
+      <button class="btn btn-sm btn-ghost" onclick="openStatus('${p.id}','${p.trackingCode}','${p.status}')">🔄</button>
+      <button class="btn btn-sm btn-ghost" onclick="editProd('${p.id}')">✏️</button>
+      <button class="btn btn-sm btn-red" onclick="delProd('${p.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function renderRecent(list){
+  const tb=document.getElementById('recent-body');
+  if(!list.length){ tb.innerHTML=`<tr><td colspan="5"><div class="empty"><p>No shipments yet</p></div></td></tr>`; return; }
+  tb.innerHTML=list.map(p=>`<tr>
+    <td><strong style="color:var(--gold)">#${p.customerId}</strong></td>
+    <td>${p.productName}</td>
+    <td><code style="font-size:12px">${p.trackingCode}</code></td>
+    <td>${p.boxNumber||'—'}</td>
+    <td>${badge(p.status)}</td>
+  </tr>`).join('');
+}
+
+// ══════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════
+function filterCust(q){ q=q.toLowerCase(); renderCusts(CUSTS.filter(c=>c.name.toLowerCase().includes(q)||c.customerId.includes(q)||(c.email||'').toLowerCase().includes(q))); }
+function filterProd(q){ q=q.toLowerCase(); renderProds(PRODS.filter(p=>p.trackingCode.toLowerCase().includes(q)||p.customerId.includes(q)||(p.boxNumber||'').toLowerCase().includes(q)||p.productName.toLowerCase().includes(q))); }
+
+// ══════════════════════════════════════════
+// CUSTOMER ID GENERATOR
+// ══════════════════════════════════════════
+async function nextCID(){
+  const snap=await db.collection('customers').orderBy('customerId','desc').limit(1).get();
+  if(snap.empty) return '0011';
+  const n=parseInt(snap.docs[0].data().customerId);
+  if(n>=9999) throw new Error('Max 9999 customers reached');
+  return String(n+1).padStart(4,'0');
+}
+
+// ══════════════════════════════════════════
+// CUSTOMER CRUD
+// ══════════════════════════════════════════
+function openAddCust(){
+  document.getElementById('m-cust-title').textContent='Add Customer';
+  document.getElementById('cust-edit-id').value='';
+  document.getElementById('cust-name').value='';
+  document.getElementById('cust-email').value='';
+  openM('m-cust');
+}
+function editCust(id){
+  const c=CUSTS.find(x=>x.id===id); if(!c) return;
+  document.getElementById('m-cust-title').textContent='Edit Customer';
+  document.getElementById('cust-edit-id').value=id;
+  document.getElementById('cust-name').value=c.name;
+  document.getElementById('cust-email').value=c.email||'';
+  openM('m-cust');
+}
+async function saveCust(){
+  const name=document.getElementById('cust-name').value.trim();
+  const email=document.getElementById('cust-email').value.trim();
+  const eid=document.getElementById('cust-edit-id').value;
+  if(!name){ toast('Name is required','terr'); return; }
+  try{
+    if(eid){
+      await db.collection('customers').doc(eid).update({name,email,updatedAt:TS()});
+      toast('Customer updated!');
+    } else {
+      const customerId=await nextCID();
+      await db.collection('customers').add({customerId,name,email,createdAt:TS()});
+      toast(`Customer added! ID: #${customerId}`);
+    }
+    closeM('m-cust');
+  }catch(e){ toast('Error: '+e.message,'terr'); }
+}
+async function delCust(id){
+  if(!confirm('Delete this customer? Their products will NOT be deleted.')) return;
+  await db.collection('customers').doc(id).delete();
+  toast('Customer deleted');
+}
+
+// ══════════════════════════════════════════
+// PRODUCT CRUD
+// ══════════════════════════════════════════
+function openAddProd(){
+  document.getElementById('m-prod-title').textContent='Add Product';
+  ['prod-edit-id','p-cid','p-name','p-track','p-box'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-status').value='Buy';
+  openM('m-prod');
+}
+function editProd(id){
+  const p=PRODS.find(x=>x.id===id); if(!p) return;
+  document.getElementById('m-prod-title').textContent='Edit Product';
+  document.getElementById('prod-edit-id').value=id;
+  document.getElementById('p-cid').value=p.customerId;
+  document.getElementById('p-name').value=p.productName;
+  document.getElementById('p-track').value=p.trackingCode;
+  document.getElementById('p-box').value=p.boxNumber||'';
+  document.getElementById('p-status').value=p.status;
+  openM('m-prod');
+}
+async function saveProd(){
+  const cid=document.getElementById('p-cid').value.trim();
+  const name=document.getElementById('p-name').value.trim();
+  const track=document.getElementById('p-track').value.trim();
+  const box=document.getElementById('p-box').value.trim();
+  const status=document.getElementById('p-status').value;
+  const eid=document.getElementById('prod-edit-id').value;
+  if(!cid||!name||!track){ toast('Customer ID, Product Name and Tracking Code are required','terr'); return; }
+  // Duplicate tracking check
+  const dup=await db.collection('products').where('trackingCode','==',track).get();
+  if(!dup.empty && dup.docs[0].id!==eid){ toast('Tracking code already exists!','terr'); return; }
+  try{
+    if(eid){
+      await db.collection('products').doc(eid).update({customerId:cid,productName:name,trackingCode:track,boxNumber:box,status,updatedAt:TS()});
+      toast('Product updated!');
+    } else {
+      await db.collection('products').add({customerId:cid,productName:name,trackingCode:track,boxNumber:box,status,createdAt:TS(),updatedAt:TS()});
+      toast('Product added!');
+    }
+    closeM('m-prod');
+  }catch(e){ toast('Error: '+e.message,'terr'); }
+}
+async function delProd(id){
+  if(!confirm('Delete this product permanently?')) return;
+  await db.collection('products').doc(id).delete();
+  toast('Product deleted');
+}
+
+// ══════════════════════════════════════════
+// STATUS UPDATE
+// ══════════════════════════════════════════
+function openStatus(id,track,cur){
+  document.getElementById('st-pid').value=id;
+  document.getElementById('st-track').textContent=track;
+  document.getElementById('st-sel').value=cur;
+  openM('m-status');
+}
+async function saveStatus(){
+  const id=document.getElementById('st-pid').value;
+  const s=document.getElementById('st-sel').value;
+  await db.collection('products').doc(id).update({status:s,updatedAt:TS()});
+  toast('Status → '+s);
+  closeM('m-status');
+}
+
+// ══════════════════════════════════════════
+// BOX DELIVERY
+// ══════════════════════════════════════════
+function previewBox(box){
+  const pv=document.getElementById('box-preview');
+  if(!box){ pv.style.display='none'; return; }
+  const items=PRODS.filter(p=>p.boxNumber===box);
+  if(!items.length){ pv.style.display='none'; return; }
+  document.getElementById('box-preview-head').textContent=`${items.length} product(s) in box "${box}"`;
+  document.getElementById('box-body').innerHTML=items.map(p=>`<tr>
+    <td><strong style="color:var(--gold)">#${p.customerId}</strong></td>
+    <td>${p.productName}</td>
+    <td><code style="font-size:12px">${p.trackingCode}</code></td>
+    <td>${badge(p.status)}</td>
+  </tr>`).join('');
+  pv.style.display='block';
+}
+
+async function markDelivered(){
+  const box=document.getElementById('box-num').value.trim();
+  if(!box){ toast('Enter a box number first','terr'); return; }
+  const items=PRODS.filter(p=>p.boxNumber===box);
+  if(!items.length){ toast('No products found for this box','terr'); return; }
+  if(!confirm(`Mark ALL ${items.length} products in "${box}" as Delivered?`)) return;
+  const batch=db.batch();
+  items.forEach(p=>batch.update(db.collection('products').doc(p.id),{status:'Delivered',updatedAt:TS()}));
+  await batch.commit();
+  toast(`✅ ${items.length} products delivered!`);
+}
+
+async function setBoxStatus(){
+  const box=document.getElementById('box-num').value.trim();
+  const status=document.getElementById('box-status-sel').value;
+  if(!box){ toast('Enter a box number','terr'); return; }
+  if(!status){ toast('Select a status','terr'); return; }
+  const items=PRODS.filter(p=>p.boxNumber===box);
+  if(!items.length){ toast('No products found for this box','terr'); return; }
+  const batch=db.batch();
+  items.forEach(p=>batch.update(db.collection('products').doc(p.id),{status,updatedAt:TS()}));
+  await batch.commit();
+  toast(`✅ ${items.length} products → ${status}`);
+}
+
+// ══════════════════════════════════════════
+// CUSTOMER DETAIL VIEW
+// ══════════════════════════════════════════
+let DC=null, DP=[];
+function viewDetail(cid){
+  DC=CUSTS.find(c=>c.customerId===cid);
+  DP=PRODS.filter(p=>p.customerId===cid);
+  if(!DC) return;
+  document.getElementById('m-detail-title').textContent=`📋 ${DC.name}`;
+  document.getElementById('detail-info').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px">Customer ID</div><div style="font-size:18px;font-weight:900;color:var(--gold)">#${DC.customerId}</div></div>
+      <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px">Name</div><div style="font-weight:700">${DC.name}</div></div>
+      <div><div style="font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px">Total Items</div><div style="font-weight:800;font-size:18px">${DP.length}</div></div>
+    </div>`;
+  document.getElementById('detail-body').innerHTML = !DP.length
+    ? `<tr><td colspan="4"><div class="empty"><p>No products for this customer</p></div></td></tr>`
+    : DP.map(p=>`<tr>
+        <td><strong>${p.productName}</strong></td>
+        <td><code style="font-size:12px">${p.trackingCode}</code></td>
+        <td>${p.boxNumber||'—'}</td>
+        <td>${badge(p.status)}</td>
+      </tr>`).join('');
+  openM('m-detail');
+}
+
+// ─── WhatsApp ───
+function doWA(){
+  if(!DC) return;
+  const rows=DP.map(p=>`📦 *${p.productName}*\n   Tracking: ${p.trackingCode}\n   Box: ${p.boxNumber||'—'}\n   Status: ${p.status}`).join('\n\n');
+  const msg=`*💎 TRENDY LUXURY*\n*Shipment Update*\n━━━━━━━━━━━━━━━━━━\n\nDear *${DC.name}* (ID: #${DC.customerId})\n\nYour shipment details:\n\n${rows}\n\n━━━━━━━━━━━━━━━━━━\n📞 WhatsApp: +8801614867033\n💬 WeChat: ashik_akanda\n🌏 Trendy Luxury | China → Bangladesh\n\nTrack online: ${location.origin.replace('admin','track')}/track.html?id=${DC.customerId}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ─── Excel ───
+function doExcel(){
+  if(!DC||!DP.length){ toast('No data to export','terr'); return; }
+  const rows=DP.map(p=>({'Customer ID':DC.customerId,'Customer Name':DC.name,'Product Name':p.productName,'Tracking Code':p.trackingCode,'Box Number':p.boxNumber||'','Status':p.status}));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Shipments');
+  XLSX.writeFile(wb,`TrendyLuxury_${DC.customerId}_${DC.name.replace(/ /g,'_')}.xlsx`);
+  toast('Excel downloaded!');
+}
+
+// ─── PDF ───
+async function doPDF(){
+  if(!DC) return;
+  const now=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;top:-9999px;left:-9999px;width:794px;background:#fff;font-family:Segoe UI,Arial,sans-serif;';
+  el.innerHTML=`
+    <div style="background:linear-gradient(135deg,#0a1628 0%,#0f2347 100%);padding:34px 40px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:1px">💎 TRENDY LUXURY</div>
+        <div style="color:#c9a84c;font-size:11px;letter-spacing:3px;margin-top:4px;text-transform:uppercase">China → Bangladesh Import Platform</div>
+      </div>
+      <div style="text-align:right;color:rgba(255,255,255,0.55);font-size:12px;line-height:2;">
+        <div style="color:#e8c96a;font-weight:800;font-size:13px">SHIPMENT REPORT</div>
+        <div>${now}</div>
+        <div>CEO: MD ASHIKUR RAHMAN AKANDA</div>
+      </div>
+    </div>
+    <div style="height:4px;background:linear-gradient(90deg,#c9a84c,#e8c96a);"></div>
+    <div style="padding:26px 40px;background:#f7f9ff;border-bottom:1px solid #dde4f2;">
+      <div style="font-size:10px;color:#6b7a9e;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:800">Customer Information</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div><div style="font-size:10px;color:#6b7a9e;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px">Customer ID</div><div style="font-size:20px;font-weight:900;color:#c9a84c">#${DC.customerId}</div></div>
+        <div><div style="font-size:10px;color:#6b7a9e;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px">Full Name</div><div style="font-size:15px;font-weight:700;color:#0a1628">${DC.name}</div></div>
+        <div><div style="font-size:10px;color:#6b7a9e;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px">Email</div><div style="font-size:13px;color:#0a1628">${DC.email||'—'}</div></div>
+        <div><div style="font-size:10px;color:#6b7a9e;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px">Total Items</div><div style="font-size:20px;font-weight:900;color:#0f2347">${DP.length}</div></div>
+      </div>
+    </div>
+    <div style="padding:24px 40px;">
+      <div style="font-size:10px;color:#6b7a9e;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:800">Shipment Details</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#0a1628;">
+          <th style="padding:11px 14px;color:#c9a84c;font-size:11px;letter-spacing:1px;text-align:left;text-transform:uppercase">Product Name</th>
+          <th style="padding:11px 14px;color:#c9a84c;font-size:11px;letter-spacing:1px;text-align:left;text-transform:uppercase">Tracking Code</th>
+          <th style="padding:11px 14px;color:#c9a84c;font-size:11px;letter-spacing:1px;text-align:left;text-transform:uppercase">Box No.</th>
+          <th style="padding:11px 14px;color:#c9a84c;font-size:11px;letter-spacing:1px;text-align:left;text-transform:uppercase">Status</th>
+        </tr></thead>
+        <tbody>${DP.map((p,i)=>`
+          <tr style="background:${i%2===0?'#fff':'#f7f9ff'};border-bottom:1px solid #eef2fb;">
+            <td style="padding:11px 14px;font-size:13px;font-weight:600">${p.productName}</td>
+            <td style="padding:11px 14px;font-family:monospace;font-size:12px">${p.trackingCode}</td>
+            <td style="padding:11px 14px;font-size:13px">${p.boxNumber||'—'}</td>
+            <td style="padding:11px 14px;font-size:12px;font-weight:800">${p.status}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:0 40px;border-top:2px solid #c9a84c;padding:18px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:11.5px;color:#6b7a9e;">
+      <div><div style="font-weight:800;color:#0a1628;margin-bottom:5px">🇧🇩 BANGLADESH OFFICE</div><div>Kuril, Vatara, Dhaka, Bangladesh</div><div style="margin-top:2px">WhatsApp: +8801614867033</div></div>
+      <div><div style="font-weight:800;color:#0a1628;margin-bottom:5px">🇨🇳 CHINA OFFICE</div><div>Nantong, Jiangsu, China</div><div style="margin-top:2px">WeChat: ashik_akanda</div></div>
+      <div style="text-align:right"><div style="font-weight:900;color:#c9a84c;font-size:16px">TRENDY LUXURY</div><div>Premium Import Platform</div><div style="margin-top:2px">Generated: ${now}</div></div>
+    </div>
+    <div style="background:#0a1628;padding:11px 40px;margin-top:16px;text-align:center;color:rgba(255,255,255,0.35);font-size:10.5px;">This document is auto-generated by Trendy Luxury Import Management Platform</div>
+  `;
+  document.body.appendChild(el);
+  try{
+    const canvas=await html2canvas(el,{scale:2,useCORS:true,logging:false});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF('p','mm','a4');
+    const w=pdf.internal.pageSize.getWidth();
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.93),'JPEG',0,0,w,(canvas.height*w)/canvas.width);
+    pdf.save(`TrendyLuxury_${DC.customerId}_${DC.name.replace(/ /g,'_')}.pdf`);
+    toast('PDF downloaded!');
+  }catch(e){ toast('PDF error: '+e.message,'terr'); }
+  document.body.removeChild(el);
+}
+</script>
+</body>
+</html>

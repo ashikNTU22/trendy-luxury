@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trendy Luxury — Login</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  min-height:100vh;
+  background:linear-gradient(145deg,#0a1628 0%,#0f2347 60%,#0a1628 100%);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  overflow:hidden;
+}
+/* Animated background circles */
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;pointer-events:none;
+  animation:float 8s ease-in-out infinite;
+}
+body::before{
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 70%);
+  top:-150px;right:-150px;
+}
+body::after{
+  width:350px;height:350px;
+  background:radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 70%);
+  bottom:-100px;left:-100px;
+  animation-delay:-4s;
+}
+@keyframes float{
+  0%,100%{transform:scale(1) translate(0,0);}
+  50%{transform:scale(1.1) translate(10px,-10px);}
+}
+.card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(201,168,76,0.18);
+  border-radius:22px;
+  padding:46px 38px;
+  width:100%;max-width:400px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.45);
+  animation:up 0.55s cubic-bezier(.4,0,.2,1);
+  position:relative;z-index:1;
+}
+@keyframes up{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
+.logo{text-align:center;margin-bottom:34px;}
+.logo-box{
+  width:64px;height:64px;margin:0 auto 14px;
+  background:linear-gradient(135deg,#c9a84c,#e8c96a);
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  box-shadow:0 8px 24px rgba(201,168,76,0.38);
+}
+.logo h1{font-size:22px;font-weight:800;color:#fff;letter-spacing:.3px;}
+.logo p{color:rgba(255,255,255,0.35);font-size:11.5px;margin-top:4px;letter-spacing:2.5px;text-transform:uppercase;}
+.lbl{display:block;color:rgba(255,255,255,0.55);font-size:12.5px;font-weight:600;margin-bottom:7px;letter-spacing:.3px;}
+.inp{
+  width:100%;padding:13px 16px;
+  background:rgba(255,255,255,0.07);
+  border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:11px;color:#fff;
+  font-size:15px;font-family:inherit;outline:none;
+  transition:all .2s;margin-bottom:15px;
+}
+.inp:focus{border-color:rgba(201,168,76,0.55);background:rgba(255,255,255,0.1);}
+.inp::placeholder{color:rgba(255,255,255,0.22);}
+.btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#c9a84c,#e8c96a);
+  color:#0a1628;border:none;border-radius:11px;
+  font-size:15px;font-weight:800;font-family:inherit;
+  cursor:pointer;transition:all .2s;letter-spacing:.3px;margin-top:4px;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.42);}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.err{
+  color:#f87171;font-size:13px;text-align:center;
+  margin-top:14px;padding:11px 14px;
+  background:rgba(248,113,113,0.1);
+  border:1px solid rgba(248,113,113,0.2);
+  border-radius:9px;display:none;
+}
+.note{text-align:center;margin-top:26px;color:rgba(255,255,255,0.18);font-size:11.5px;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-box">💎</div>
+    <h1>Trendy Luxury</h1>
+    <p>Admin Portal</p>
+  </div>
+
+  <form onsubmit="doLogin(event)">
+    <label class="lbl">Email Address</label>
+    <input class="inp" type="email" id="em" placeholder="your@email.com" autocomplete="email" required>
+
+    <label class="lbl">Password</label>
+    <input class="inp" type="password" id="pw" placeholder="Your password" autocomplete="current-password" required>
+
+    <button class="btn" id="loginBtn" type="submit">🔐 Login to Dashboard</button>
+  </form>
+
+  <div class="err" id="errBox"></div>
+
+  <div class="note">
+    🔒 Secure admin access only<br>
+    Trendy Luxury · China → Bangladesh
+  </div>
+</div>
+
+<script>
+// ╔══════════════════════════════════════════╗
+// ║  PASTE YOUR FIREBASE CONFIG HERE         ║
+// ║  (get it from Firebase Console)          ║
+// ╚══════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyBsrLYkffkEtXzy5r8SEaAkqpKd3rf6_Zw",
+  authDomain: "trendy-luxury.firebaseapp.com",
+  projectId: "trendy-luxury",
+  storageBucket: "trendy-luxury.firebasestorage.app",
+  messagingSenderId: "117124873306",
+  appId: "1:117124873306:web:790e5016b05d01fde2ec63",
+  measurementId: "G-RTQYSZXWRB"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// If already logged in → skip straight to dashboard
+auth.onAuthStateChanged(u => { if(u) location.href='admin.html'; });
+
+async function doLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('errBox');
+  btn.disabled=true; btn.textContent='⏳ Logging in...'; err.style.display='none';
+  try{
+    await auth.signInWithEmailAndPassword(
+      document.getElementById('em').value.trim(),
+      document.getElementById('pw').value
+    );
+    // onAuthStateChanged handles redirect
+  }catch(ex){
+    const msgs={
+      'auth/user-not-found':'No account found with this email.',
+      'auth/wrong-password':'Wrong password. Try again.',
+      'auth/invalid-email':'Invalid email address.',
+      'auth/too-many-requests':'Too many attempts. Wait a few minutes.',
+      'auth/invalid-credential':'Wrong email or password.'
+    };
+    err.textContent='⚠️ '+(msgs[ex.code]||'Login failed. Check your details.');
+    err.style.display='block';
+    btn.disabled=false; btn.textContent='🔐 Login to Dashboard';
+  }
+}
+</script>
+</body>
+</html>
